@@ -85,16 +85,21 @@
     /* ====== Layout ====== */
     .wrap{max-width:var(--max); margin:0 auto; padding:0 22px}
     .section{padding: 84px 0; position:relative; isolation:isolate;}
+
+    /* PERFORMANCE: renderiza seção só quando aparecer */
+    .section{
+      content-visibility: auto;
+      contain-intrinsic-size: 800px;
+    }
+
     .section.tight{padding: 64px 0;}
 
-    /* Divisor (linha sutil) */
     .divider{
       height: 1px;
       background: linear-gradient(90deg, transparent, rgba(168,216,255,.28), rgba(255,255,255,.08), transparent);
       opacity:.65;
     }
 
-    /* ====== Separação “premium recortada” entre blocos ====== */
     .sectionCut{
       position:relative;
     }
@@ -123,7 +128,6 @@
       z-index:2;
     }
 
-    /* brilho sutil por seção */
     .section:before{
       content:"";
       position:absolute;
@@ -146,7 +150,7 @@
       justify-content:space-between;
       gap:14px;
       padding: 14px 0;
-      flex-wrap:wrap; /* mobile-friendly */
+      flex-wrap:wrap;
     }
 
     .brand{
@@ -413,7 +417,7 @@
       font-size: 15px;
     }
 
-    /* ====== ENTENDENDO (efeito premium nos cards tipo ref) ====== */
+    /* ====== ENTENDENDO ====== */
     .cards4{
       display:grid;
       grid-template-columns: repeat(4, minmax(0,1fr));
@@ -613,12 +617,12 @@
       flex-wrap:wrap;
     }
 
-    /* ====== Frutas REALISTAS (camada por seção) ====== */
+    /* ====== Frutas (camada por seção) ====== */
     .fruitStage{
       position:absolute;
       inset: 0;
       pointer-events:none;
-      z-index:1; /* acima do brilho da seção, abaixo do conteúdo */
+      z-index:1;
       overflow:hidden;
     }
     .fruit{
@@ -654,7 +658,6 @@
       animation: floaty var(--dur, 5.6s) ease-in-out infinite;
     }
 
-    /* “vinheta” pra fruta ficar sutil */
     .fruitStage:after{
       content:"";
       position:absolute; inset:-40px;
@@ -665,10 +668,9 @@
       z-index:2;
     }
 
-    /* Conteúdo acima das frutas */
     .section .wrap{position:relative; z-index:3;}
 
-    /* ====== WhatsApp (safe area + não cortar) ====== */
+    /* ====== WhatsApp ====== */
     .wa{
       position: fixed;
       right: calc(18px + var(--safe-r));
@@ -705,7 +707,7 @@
     }
     @keyframes waPulse{0%{transform: scale(.82); opacity:.0}35%{opacity:.55}100%{transform: scale(1.10); opacity:0}}
 
-    /* ====== Instagram Float (safe area) ====== */
+    /* ====== Instagram Float ====== */
     .ig{
       position: fixed;
       right: calc(18px + var(--safe-r));
@@ -724,10 +726,7 @@
     .ig:hover{transform: translateY(-6px) scale(1.04);}
     .ig svg{filter: drop-shadow(0 10px 18px rgba(0,0,0,.45));}
 
-    /* espaço pra não “brigar” com botões flutuantes no mobile */
-    .floatSafe{
-      padding-bottom: 130px;
-    }
+    .floatSafe{padding-bottom: 130px;}
 
     /* ====== Reveal ====== */
     .reveal{opacity:0; transform: translateY(10px); transition: .6s ease;}
@@ -759,7 +758,6 @@
       .nav{display:none}
       .btn.big{min-width: 100%}
 
-      /* topbar melhor no mobile */
       .topActions{
         width:100%;
         justify-content:space-between;
@@ -785,6 +783,16 @@
       .section{padding: 72px 0}
       .sectionCut:after{height: 72px}
       .fruit{width: var(--w, 130px); opacity: var(--o, .14);}
+
+      /* PERFORMANCE: deixa só 2 frutas por seção no celular */
+      .fruitStage .fruit:nth-child(n+3){display:none !important;}
+    }
+
+    /* PERFORMANCE: blur/backdrop no mobile (custa muito) */
+    @media (max-width: 820px){
+      .topbar{ backdrop-filter: none !important; }
+      .glass{ backdrop-filter: none !important; }
+      .stat{ backdrop-filter: none !important; }
     }
   </style>
 </head>
@@ -797,7 +805,7 @@
     <div class="wrap in">
       <div class="brand">
         <div class="logoBox">
-          <img class="logoImg" src="./IMG_6681.PNG" alt="Logo Dra. Ana Beatriz" decoding="async" />
+          <img class="logoImg" src="img/IMG_6681.webp" alt="Logo Dra. Ana Beatriz" decoding="async" loading="lazy" />
         </div>
         <div class="brandText">
           <b>Nutrição • Plano Guiado</b>
@@ -813,7 +821,6 @@
       </nav>
 
       <div class="topActions">
-        <!-- Instagram (ícone) -->
         <a
           class="btn icon"
           href="https://www.instagram.com/dra.beatrizana?igsh=MXZxZ3JrdWxmbzFyYg%3D%3D&utm_source=qr"
@@ -835,14 +842,17 @@
 
   <!-- HERO -->
   <header class="hero sectionCut top">
-    <!-- Frutas do HERO -->
     <div class="fruitStage" aria-hidden="true">
-      <!-- Troque os arquivos para frutas REALISTAS (PNG/WebP transparente) -->
-      <img class="fruit anim glow" data-depth="0.08" style="--tx: -40px; --ty: 70px; --rot:-14deg; --w:210px; --o:.14; --dur:6.4s;" src="assets/fruits/morango.webp" alt="">
-      <img class="fruit anim soft" data-depth="0.12" style="--tx: calc(100vw - 240px); --ty: 120px; --rot:18deg; --w:220px; --o:.12; --dur:7.1s;" src="assets/fruits/banana.webp" alt="">
-      <img class="fruit anim" data-depth="0.10" style="--tx: 60px; --ty: 360px; --rot:8deg; --w:170px; --o:.12; --dur:6.0s;" src="assets/fruits/uva.webp" alt="">
-      <img class="fruit anim soft" data-depth="0.14" style="--tx: calc(100vw - 210px); --ty: 420px; --rot:-10deg; --w:190px; --o:.10; --dur:6.6s;" src="assets/fruits/maca.webp" alt="">
-      <img class="fruit anim glow" data-depth="0.09" style="--tx: calc(50vw - 80px); --ty: 520px; --rot:6deg; --w:220px; --o:.10; --dur:7.4s;" src="assets/fruits/melancia.webp" alt="">
+      <img class="fruit anim glow" data-depth="0.08" style="--tx: -40px; --ty: 70px; --rot:-14deg; --w:210px; --o:.14; --dur:6.4s;"
+           src="img/morango.webp" alt="" loading="lazy" decoding="async" fetchpriority="low">
+      <img class="fruit anim soft" data-depth="0.12" style="--tx: calc(100vw - 240px); --ty: 120px; --rot:18deg; --w:220px; --o:.12; --dur:7.1s;"
+           src="img/bana.webp" alt="" loading="lazy" decoding="async" fetchpriority="low">
+      <img class="fruit anim" data-depth="0.10" style="--tx: 60px; --ty: 360px; --rot:8deg; --w:170px; --o:.12; --dur:6.0s;"
+           src="img/alface-removebg-preview.webp" alt="" loading="lazy" decoding="async" fetchpriority="low">
+      <img class="fruit anim soft" data-depth="0.14" style="--tx: calc(100vw - 210px); --ty: 420px; --rot:-10deg; --w:190px; --o:.10; --dur:6.6s;"
+           src="img/laranja.webp" alt="" loading="lazy" decoding="async" fetchpriority="low">
+      <img class="fruit anim glow" data-depth="0.09" style="--tx: calc(50vw - 80px); --ty: 520px; --rot:6deg; --w:220px; --o:.10; --dur:7.4s;"
+           src="img/comida-removebg-preview.webp" alt="" loading="lazy" decoding="async" fetchpriority="low">
     </div>
 
     <div class="wrap hero-grid">
@@ -868,12 +878,19 @@
       <div class="glass hero-right reveal">
         <div class="portrait" id="heroCarousel">
           <div class="carousel" aria-label="Carrossel de imagens">
-            <img class="active" src="./photo_5179465297960832080_y.jpg" alt="Atendimento nutricional 1" decoding="async">
-            <img src="./IMG_6681.PNG" alt="Atendimento nutricional 2" loading="lazy" decoding="async">
-            <img src="./img4.jpg" alt="Atendimento nutricional 3" loading="lazy" decoding="async">
-            <img src="./phot3.jpg" alt="Atendimento nutricional 4" loading="lazy" decoding="async">
-            <img src="./IMG_3721.JPG.jpeg" alt="Atendimento nutricional 5" loading="lazy" decoding="async">
-            <img src="./img6.jpg" alt="Atendimento nutricional 6" loading="lazy" decoding="async">
+            <!-- PRIMEIRA carrega já (LCP) -->
+            <img class="active"
+                 src="img/photo_5179465297960832080_y.webp"
+                 alt="Atendimento nutricional 1"
+                 decoding="async"
+                 fetchpriority="high">
+
+            <!-- As outras só carregam quando forem usar -->
+            <img data-src="img/IMG_6681.webp" alt="Atendimento nutricional 2" loading="lazy" decoding="async">
+            <img data-src="img/img4.webp" alt="Atendimento nutricional 3" loading="lazy" decoding="async">
+            <img data-src="img/phot3.webp" alt="Atendimento nutricional 4" loading="lazy" decoding="async">
+            <img data-src="img/IMG_3721.webp" alt="Atendimento nutricional 5" loading="lazy" decoding="async">
+            <img data-src="img/img6.webp" alt="Atendimento nutricional 6" loading="lazy" decoding="async">
           </div>
 
           <div class="stat s1">
@@ -906,16 +923,19 @@
 
   <div class="divider"></div>
 
-  <!-- ENTENDENDO -->
-  <section class="section" id="entendendo">  
+  <!-- ENTENDENDO (corrigido: sem section duplicada) -->
   <section class="section sectionCut" id="entendendo">
-    <!-- Frutas do bloco ENTENDENDO -->
     <div class="fruitStage" aria-hidden="true">
-      <img class="fruit anim glow" data-depth="0.10" style="--tx: -60px; --ty: 90px; --rot:-10deg; --w:240px; --o:.13; --dur:7.0s;" src="/bana.png" alt="">
-      <img class="fruit anim soft" data-depth="0.14" style="--tx: calc(100vw - 240px); --ty: 60px; --rot:14deg; --w:220px; --o:.11; --dur:6.8s;" src="/comida-removebg-preview.png" alt="">
-      <img class="fruit anim" data-depth="0.12" style="--tx: 40px; --ty: 420px; --rot:7deg; --w:180px; --o:.10; --dur:6.2s;" src="./alface-removebg-preview.png" alt="">
-      <img class="fruit anim soft" data-depth="0.16" style="--tx: calc(100vw - 220px); --ty: 520px; --rot:-12deg; --w:210px; --o:.09; --dur:7.6s;" src="./morango.png" alt="">
-      <img class="fruit anim glow" data-depth="0.11" style="--tx: calc(50vw - 90px); --ty: 640px; --rot:5deg; --w:250px; --o:.09; --dur:7.2s;" src="./laranja.png" alt="">
+      <img class="fruit anim glow" data-depth="0.10" style="--tx: -60px; --ty: 90px; --rot:-10deg; --w:240px; --o:.13; --dur:7.0s;"
+           src="img/bana.webp" alt="" loading="lazy" decoding="async" fetchpriority="low">
+      <img class="fruit anim soft" data-depth="0.14" style="--tx: calc(100vw - 240px); --ty: 60px; --rot:14deg; --w:220px; --o:.11; --dur:6.8s;"
+           src="img/comida-removebg-preview.webp" alt="" loading="lazy" decoding="async" fetchpriority="low">
+      <img class="fruit anim" data-depth="0.12" style="--tx: 40px; --ty: 420px; --rot:7deg; --w:180px; --o:.10; --dur:6.2s;"
+           src="img/alface-removebg-preview.webp" alt="" loading="lazy" decoding="async" fetchpriority="low">
+      <img class="fruit anim soft" data-depth="0.16" style="--tx: calc(100vw - 220px); --ty: 520px; --rot:-12deg; --w:210px; --o:.09; --dur:7.6s;"
+           src="img/morango.webp" alt="" loading="lazy" decoding="async" fetchpriority="low">
+      <img class="fruit anim glow" data-depth="0.11" style="--tx: calc(50vw - 90px); --ty: 640px; --rot:5deg; --w:250px; --o:.09; --dur:7.2s;"
+           src="img/laranja.webp" alt="" loading="lazy" decoding="async" fetchpriority="low">
     </div>
 
     <div class="wrap">
@@ -982,13 +1002,17 @@
 
   <!-- BIG CARD -->
   <section class="section tight sectionCut" id="diagnostico">
-    <!-- Frutas do bloco PLANO -->
     <div class="fruitStage" aria-hidden="true">
-      <img class="fruit anim glow" data-depth="0.10" style="--tx: -70px; --ty: 30px; --rot:-9deg; --w:250px; --o:.12; --dur:7.2s;" src="/bana.png" alt="">
-      <img class="fruit anim soft" data-depth="0.14" style="--tx: calc(100vw - 250px); --ty: 80px; --rot:18deg; --w:230px; --o:.10; --dur:7.0s;" src="/alface-removebg-preview.png" alt="">
-      <img class="fruit anim" data-depth="0.12" style="--tx: 40px; --ty: 320px; --rot:5deg; --w:180px; --o:.09; --dur:6.4s;" src="./laranja.png" alt="">
-      <img class="fruit anim soft" data-depth="0.16" style="--tx: calc(100vw - 220px); --ty: 360px; --rot:-12deg; --w:210px; --o:.09; --dur:7.6s;" src="/morango.png" alt="">
-      <img class="fruit anim glow" data-depth="0.11" style="--tx: calc(50vw - 90px); --ty: 420px; --rot:6deg; --w:240px; --o:.08; --dur:7.4s;" src="/comida-removebg-preview.png" alt="">
+      <img class="fruit anim glow" data-depth="0.10" style="--tx: -70px; --ty: 30px; --rot:-9deg; --w:250px; --o:.12; --dur:7.2s;"
+           src="img/bana.webp" alt="" loading="lazy" decoding="async" fetchpriority="low">
+      <img class="fruit anim soft" data-depth="0.14" style="--tx: calc(100vw - 250px); --ty: 80px; --rot:18deg; --w:230px; --o:.10; --dur:7.0s;"
+           src="img/alface-removebg-preview.webp" alt="" loading="lazy" decoding="async" fetchpriority="low">
+      <img class="fruit anim" data-depth="0.12" style="--tx: 40px; --ty: 320px; --rot:5deg; --w:180px; --o:.09; --dur:6.4s;"
+           src="img/laranja.webp" alt="" loading="lazy" decoding="async" fetchpriority="low">
+      <img class="fruit anim soft" data-depth="0.16" style="--tx: calc(100vw - 220px); --ty: 360px; --rot:-12deg; --w:210px; --o:.09; --dur:7.6s;"
+           src="img/morango.webp" alt="" loading="lazy" decoding="async" fetchpriority="low">
+      <img class="fruit anim glow" data-depth="0.11" style="--tx: calc(50vw - 90px); --ty: 420px; --rot:6deg; --w:240px; --o:.08; --dur:7.4s;"
+           src="img/comida-removebg-preview.webp" alt="" loading="lazy" decoding="async" fetchpriority="low">
     </div>
 
     <div class="wrap">
@@ -1018,13 +1042,17 @@
 
   <!-- CHECKLIST -->
   <section class="section sectionCut" id="check">
-    <!-- Frutas do bloco CHECKLIST -->
     <div class="fruitStage" aria-hidden="true">
-      <img class="fruit anim glow" data-depth="0.10" style="--tx: -80px; --ty: 70px; --rot:-12deg; --w:250px; --o:.12; --dur:7.0s;" src="/alface-removebg-preview.png" alt="">
-      <img class="fruit anim soft" data-depth="0.14" style="--tx: calc(100vw - 250px); --ty: 40px; --rot:16deg; --w:230px; --o:.10; --dur:7.3s;" src="/bana.png" alt="">
-      <img class="fruit anim" data-depth="0.12" style="--tx: 30px; --ty: 420px; --rot:6deg; --w:180px; --o:.09; --dur:6.2s;" src="/comida-removebg-preview.png" alt="">
-      <img class="fruit anim soft" data-depth="0.16" style="--tx: calc(100vw - 230px); --ty: 520px; --rot:-11deg; --w:210px; --o:.09; --dur:7.7s;" src="/morango.png" alt="">
-      <img class="fruit anim glow" data-depth="0.11" style="--tx: calc(50vw - 90px); --ty: 620px; --rot:5deg; --w:240px; --o:.08; --dur:7.5s;" src="/laranja.png" alt="">
+      <img class="fruit anim glow" data-depth="0.10" style="--tx: -80px; --ty: 70px; --rot:-12deg; --w:250px; --o:.12; --dur:7.0s;"
+           src="img/alface-removebg-preview.webp" alt="" loading="lazy" decoding="async" fetchpriority="low">
+      <img class="fruit anim soft" data-depth="0.14" style="--tx: calc(100vw - 250px); --ty: 40px; --rot:16deg; --w:230px; --o:.10; --dur:7.3s;"
+           src="img/bana.webp" alt="" loading="lazy" decoding="async" fetchpriority="low">
+      <img class="fruit anim" data-depth="0.12" style="--tx: 30px; --ty: 420px; --rot:6deg; --w:180px; --o:.09; --dur:6.2s;"
+           src="img/comida-removebg-preview.webp" alt="" loading="lazy" decoding="async" fetchpriority="low">
+      <img class="fruit anim soft" data-depth="0.16" style="--tx: calc(100vw - 230px); --ty: 520px; --rot:-11deg; --w:210px; --o:.09; --dur:7.7s;"
+           src="img/morango.webp" alt="" loading="lazy" decoding="async" fetchpriority="low">
+      <img class="fruit anim glow" data-depth="0.11" style="--tx: calc(50vw - 90px); --ty: 620px; --rot:5deg; --w:240px; --o:.08; --dur:7.5s;"
+           src="img/laranja.webp" alt="" loading="lazy" decoding="async" fetchpriority="low">
     </div>
 
     <div class="wrap">
@@ -1069,19 +1097,24 @@
 
   <!-- SOBRE -->
   <section class="section sectionCut" id="sobre">
-    <!-- Frutas do bloco SOBRE -->
     <div class="fruitStage" aria-hidden="true">
-      <img class="fruit anim glow" data-depth="0.10" style="--tx: -70px; --ty: 40px; --rot:-10deg; --w:250px; --o:.12; --dur:7.2s;" src="./bana.png" alt="">
-      <img class="fruit anim soft" data-depth="0.14" style="--tx: calc(100vw - 250px); --ty: 90px; --rot:18deg; --w:230px; --o:.10; --dur:7.0s;" src="/morango.png" alt="">
-      <img class="fruit anim" data-depth="0.12" style="--tx: 40px; --ty: 440px; --rot:6deg; --w:180px; --o:.09; --dur:6.4s;" src="./laranja.png alt="">
-      <img class="fruit anim soft" data-depth="0.16" style="--tx: calc(100vw - 230px); --ty: 520px; --rot:-12deg; --w:210px; --o:.09; --dur:7.7s;" src="./comida-removebg-preview.png" alt="">
-      <img class="fruit anim glow" data-depth="0.11" style="--tx: calc(50vw - 90px); --ty: 620px; --rot:5deg; --w:240px; --o:.08; --dur:7.5s;" src="./alface-removebg-preview.png" alt="">
+      <img class="fruit anim glow" data-depth="0.10" style="--tx: -70px; --ty: 40px; --rot:-10deg; --w:250px; --o:.12; --dur:7.2s;"
+           src="img/bana.webp" alt="" loading="lazy" decoding="async" fetchpriority="low">
+      <img class="fruit anim soft" data-depth="0.14" style="--tx: calc(100vw - 250px); --ty: 90px; --rot:18deg; --w:230px; --o:.10; --dur:7.0s;"
+           src="img/morango.webp" alt="" loading="lazy" decoding="async" fetchpriority="low">
+      <!-- corrigido (aspas quebradas antes) -->
+      <img class="fruit anim" data-depth="0.12" style="--tx: 40px; --ty: 440px; --rot:6deg; --w:180px; --o:.09; --dur:6.4s;"
+           src="img/laranja.webp" alt="" loading="lazy" decoding="async" fetchpriority="low">
+      <img class="fruit anim soft" data-depth="0.16" style="--tx: calc(100vw - 230px); --ty: 520px; --rot:-12deg; --w:210px; --o:.09; --dur:7.7s;"
+           src="img/comida-removebg-preview.webp" alt="" loading="lazy" decoding="async" fetchpriority="low">
+      <img class="fruit anim glow" data-depth="0.11" style="--tx: calc(50vw - 90px); --ty: 620px; --rot:5deg; --w:240px; --o:.08; --dur:7.5s;"
+           src="img/alface-removebg-preview.webp" alt="" loading="lazy" decoding="async" fetchpriority="low">
     </div>
 
     <div class="wrap">
       <div class="about">
         <div class="photo reveal">
-          <img src="./photo_5179465297960832080_y.jpg" alt="Dra. Ana Beatriz - Nutricionista" loading="lazy" decoding="async">
+          <img src="img/photo_5179465297960832080_y.webp" alt="Dra. Ana Beatriz - Nutricionista" loading="lazy" decoding="async">
         </div>
 
         <div class="glass box reveal">
@@ -1112,14 +1145,18 @@
   </section>
 
   <!-- FINAL -->
-  <section class="final">
-    <!-- Frutas do bloco FINAL -->
+  <section class="final section">
     <div class="fruitStage" aria-hidden="true">
-      <img class="fruit anim glow" data-depth="0.10" style="--tx: -80px; --ty: 40px; --rot:-12deg; --w:260px; --o:.12; --dur:7.2s;" src="./bana.png" alt="">
-      <img class="fruit anim soft" data-depth="0.14" style="--tx: calc(100vw - 260px); --ty: 60px; --rot:18deg; --w:240px; --o:.10; --dur:7.0s;" src="./laranja.png" alt="">
-      <img class="fruit anim" data-depth="0.12" style="--tx: 40px; --ty: 320px; --rot:6deg; --w:190px; --o:.09; --dur:6.4s;" src="./alface-removebg-preview.png" alt="">
-      <img class="fruit anim soft" data-depth="0.16" style="--tx: calc(100vw - 240px); --ty: 380px; --rot:-12deg; --w:220px; --o:.09; --dur:7.7s;" src="/comida-removebg-preview.png" alt="">
-      <img class="fruit anim glow" data-depth="0.11" style="--tx: calc(50vw - 100px); --ty: 420px; --rot:5deg; --w:260px; --o:.08; --dur:7.5s;" src="/morango.png" alt="">
+      <img class="fruit anim glow" data-depth="0.10" style="--tx: -80px; --ty: 40px; --rot:-12deg; --w:260px; --o:.12; --dur:7.2s;"
+           src="img/bana.webp" alt="" loading="lazy" decoding="async" fetchpriority="low">
+      <img class="fruit anim soft" data-depth="0.14" style="--tx: calc(100vw - 260px); --ty: 60px; --rot:18deg; --w:240px; --o:.10; --dur:7.0s;"
+           src="img/laranja.webp" alt="" loading="lazy" decoding="async" fetchpriority="low">
+      <img class="fruit anim" data-depth="0.12" style="--tx: 40px; --ty: 320px; --rot:6deg; --w:190px; --o:.09; --dur:6.4s;"
+           src="img/alface-removebg-preview.webp" alt="" loading="lazy" decoding="async" fetchpriority="low">
+      <img class="fruit anim soft" data-depth="0.16" style="--tx: calc(100vw - 240px); --ty: 380px; --rot:-12deg; --w:220px; --o:.09; --dur:7.7s;"
+           src="img/comida-removebg-preview.webp" alt="" loading="lazy" decoding="async" fetchpriority="low">
+      <img class="fruit anim glow" data-depth="0.11" style="--tx: calc(50vw - 100px); --ty: 420px; --rot:5deg; --w:260px; --o:.08; --dur:7.5s;"
+           src="img/morango.webp" alt="" loading="lazy" decoding="async" fetchpriority="low">
     </div>
 
     <div class="wrap">
@@ -1184,7 +1221,7 @@
     }, {threshold: .12});
     document.querySelectorAll(".reveal").forEach(el=>io.observe(el));
 
-    // ====== CARROSSEL AUTO ======
+    // ====== CARROSSEL AUTO (lazy real via data-src) ======
     (function(){
       const root = document.querySelector("#heroCarousel .carousel");
       if(!root) return;
@@ -1193,7 +1230,22 @@
       if(slides.length <= 1) return;
 
       let idx = 0;
-      function show(i){ slides.forEach((img, n)=> img.classList.toggle("active", n === i)); }
+
+      function ensureLoaded(img){
+        if (img && !img.src) {
+          const ds = img.getAttribute("data-src");
+          if (ds) img.src = ds;
+        }
+      }
+
+      function show(i){
+        const img = slides[i];
+        ensureLoaded(img);
+        slides.forEach((im, n)=> im.classList.toggle("active", n === i));
+      }
+
+      // pré-carrega só a segunda
+      setTimeout(()=> ensureLoaded(slides[1]), 900);
 
       setInterval(()=>{
         idx = (idx + 1) % slides.length;
@@ -1201,40 +1253,32 @@
       }, 3200);
     })();
 
-    // ====== PARALLAX PREMIUM NAS FRUTAS ======
+    // ====== PARALLAX (somente desktop) ======
     (function(){
       const fruits = Array.from(document.querySelectorAll(".fruit"));
       if(!fruits.length) return;
 
-      let mx = 0, my = 0;
-      let rafId = null;
+      const canParallax =
+        matchMedia("(pointer: fine)").matches &&
+        matchMedia("(prefers-reduced-motion: no-preference)").matches;
+
+      if(!canParallax) return;
+
+      let mx = 0, my = 0, rafId = null;
 
       function apply(){
         rafId = null;
-        fruits.forEach(el=>{
+        for(const el of fruits){
           const d = parseFloat(el.dataset.depth || "0.10");
-          const x = mx * d;
-          const y = my * d;
-          el.style.setProperty("--mx", x.toFixed(2) + "px");
-          el.style.setProperty("--my", y.toFixed(2) + "px");
-        });
+          el.style.setProperty("--mx", (mx * d).toFixed(2) + "px");
+          el.style.setProperty("--my", (my * d).toFixed(2) + "px");
+        }
       }
 
-      // Desktop: mousemove
       window.addEventListener("mousemove", (e)=>{
-        const cx = window.innerWidth / 2;
-        const cy = window.innerHeight / 2;
+        const cx = innerWidth / 2, cy = innerHeight / 2;
         mx = (e.clientX - cx) * 0.18;
         my = (e.clientY - cy) * 0.18;
-        if(!rafId) rafId = requestAnimationFrame(apply);
-      }, {passive:true});
-
-      // Mobile: scroll parallax sutil (sem tremer)
-      window.addEventListener("scroll", ()=>{
-        const t = window.scrollY || 0;
-        // valores pequenos para não “bagunçar”
-        mx = Math.sin(t * 0.002) * 10;
-        my = (t * 0.02) % 18;
         if(!rafId) rafId = requestAnimationFrame(apply);
       }, {passive:true});
     })();
